@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>MTG Tournament Organizer</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <style></style>
+        <script>
+            function newTournamentF() {
+                let textInput = document.createElement("input");
+                let space = document.getElementById("programSpace");
+                space.appendChild(textInput);
+            }
+        </script>
+    </head>
+    <body>
+        <div id = mainProgram align="center">
+            <h1>MTG Tournament Organizer</h1>
+
+            <button id="newTourButton" onclick="newTournamentF()">New Tournament</button>
+
+            <div id="programSpace"></div>
+        </div>
+    </body>
+</html>
