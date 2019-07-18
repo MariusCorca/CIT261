@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+
+<body>
+    <main>
+        <h1>Auth Example app</h1>
+    </main>
+    <script type="module">
+        import { makeRequest } from './authHelpers.js';
+        import { Auth } from './auth.js';
+
+        // makeRequest('login', 'POST', {
+        //     password: 'user1',
+        //     email: 'user1@email.com'
+        // });
+
+        const authenticate = new Auth();
+        //authenticate.login();
+
+        document.getElementById("submitForm").addEventListener("touchend", authenticate.login());
+    </script>
+
+    <div id='login'>
+        <p>Username <input id="username" type="text"> </p>
+        <p>Password <input id="password" type="text"> </p>
+        <button id="submitForm">Submit</button>
+    </div>
+
+</body>
+
+</html>

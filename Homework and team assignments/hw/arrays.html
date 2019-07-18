@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>arrays</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <style></style>
+        <script>
+            function doStuff() {
+                let a = document.getElementById("input1").value;
+                let b = document.getElementById("input2").value;
+
+                console.log(range(1, 10));
+                // → [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                console.log(range(5, 2, -1));
+                // → [5, 4, 3, 2]
+                console.log(sum(range(1, 10)));
+                // → 55
+
+                console.log(reverseArray(["A", "B", "C"]));
+                // → ["C", "B", "A"];
+                let arrayValue = [1, 2, 3, 4, 5];
+                reverseArrayInPlace(arrayValue);
+                console.log(arrayValue);
+                // → [5, 4, 3, 2, 1]
+
+                console.log(arrayToList([10, 20]));
+                // → {value: 10, rest: {value: 20, rest: null}}
+            }
+
+            function range (start, end, step = 1) {
+                let bucket = [];
+                if (step < 0) {
+                        for (let i = start; i >= end; i += step) {
+                        bucket.push(i);
+                    }
+                }
+                else {
+                    for (let i = start; i <= end; i += step) {
+                        bucket.push(i);
+                    }
+                }
+                return bucket;
+            }
+
+            function sum (array = []) {
+                let total = 0;
+                for (let i = 0; i < array.length; i++) {
+                    total += array[i];
+                }
+                return total;
+            }
+
+            function reverseArray(array = []) {
+                let arrayReversed = [];
+                for (let i = array.length - 1; i >= 0; i--) {
+                    arrayReversed.push(array[i]);
+                }
+                return arrayReversed;
+            }
+
+            function reverseArrayInPlace(array = []) {
+                let halfSize = Math.floor(array.length / 2);
+                let temp = 0;
+                for (let i = 0; i <= halfSize; i++) {
+                    temp = array[i];
+                    array[i] = array[array.length - 1 - i];
+                    array[array.length - 1 - i] = temp;
+                }
+            }
+
+            function arrayToList(array = []) {
+                let list = {};
+                let i = array.length - 1;
+                Object.assign(list, {value: array[i], rest: null});
+
+                i--;
+                let list2;
+                while (i >= 0) {
+                    list2 = list;
+                    console.log(list);
+                    console.log(list2);
+                    Object.assign(list, {value: array[i], rest: list2});
+                    i--;
+                }
+
+                return list;
+
+                // Object.assign(list, {value: 1, rest: 2});
+                // console.log(list);
+            }
+        </script>
+    </head>
+    <body>
+        <label for="">a</label> <input type="text" id="input1" size="2">
+        <br>
+        <label for="">b</label> <input type="text" id="input2" size="2">
+        <br>
+        <button onclick="doStuff()">Click!</button>
+        <div id="result"></div>
+    </body>
+</html>

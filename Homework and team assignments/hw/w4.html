@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <style></style>
+        <script>
+            let arrays = [[1, 2, 3], [4, 5], [6]];
+            // Your code here.
+            // → [1, 2, 3, 4, 5, 6]
+
+            function reduce(array, start) {
+                let resultArray = start;
+                //console.log(resultArray);
+                for (let element = 1; element < array.length; element++) {
+                    resultArray = resultArray.concat(array[element]);
+                    // console.log(array[element]);
+                }
+                return resultArray;
+            }
+
+            console.log(reduce(arrays, arrays[0]));
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>

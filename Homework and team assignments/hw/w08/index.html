@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <style></style>
+        <script>
+            function convertText() {
+                text = document.getElementById('code').value;
+                document.getElementById('output').innerHTML = text;
+            }
+        </script>
+    </head>
+    <body>
+        <textarea id="code">return "hi";</textarea>
+        <button id="button" onclick="convertText()">Run</button>
+        <pre id="output"></pre>
+    </body>
+</html>
