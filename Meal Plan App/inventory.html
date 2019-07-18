@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" type="text/css" href="MealStyles.css">
-    <script></script>
+    <script src="./index.js" type="module"></script>
 </head>
 
 <body>
@@ -27,7 +27,20 @@
 
     <h1>Inventory</h1>
 
-    <div class="contentInventory"></div>
+    <div class="contentInventory">
+        <table id="listInventory">
+            
+        </table>
+
+        <div style = 'text-align: center; position: relative; top: 20px'>
+            <button id='addItemButton'>Add Item</button>
+            <!-- <button id='deleteItemButton'>Delete Item</button> -->
+        </div>
+
+        <table style="position: relative; top: 30px" id="addItemTable">
+            
+        </table>
+    </div>
 
 </body>
 
