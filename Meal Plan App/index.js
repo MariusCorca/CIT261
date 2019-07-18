@@ -1,9 +1,7 @@
 import mealController from './MealController.js';
 
 window.addEventListener('load', () => {
-    //listItems();
-    const fileName = location.href.split("/").slice(-1);
-    // console.log(fileName);
+    const fileName = location.href.split("/").slice(-1); // getting the file name that triggered this js file.
     const appController = new mealController();
 
     // create event listeners for the inventory file
@@ -25,7 +23,6 @@ window.addEventListener('load', () => {
 
         // add event listners for the delete buttons
         let deleteButtons = document.getElementsByClassName("deleteItemButtonClass");
-        // console.dir(deleteButtons);
 
         for (let i = 0; i < deleteButtons.length; i++) {
             deleteButtons[i].addEventListener("touchend", function () {
@@ -83,5 +80,15 @@ window.addEventListener('load', () => {
                 appController.editDeleteRecipe(i);
             });
         }
+    }
+
+    // start code for generate menu file
+    if (fileName == "generateMenu.html") {
+        appController.generateMenu();
+    }
+
+    // start code for generate menu file
+    if (fileName == "viewMenu.html") {
+        appController.viewMenu();
     }
 });

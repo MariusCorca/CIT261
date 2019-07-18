@@ -5,14 +5,14 @@ export default class mealController {
     constructor () {
         this.modelItems = new mealModel('items');
         this.modelRecipes = new mealModel('recipes');
+        this.modelMenus = new mealModel('menus');
         this.view = new mealView();
     }
 
+    // lists the inventory
     listItems() {
         const inventory = this.modelItems.getItems();
         const listElement = document.getElementById('listInventory');
-
-        // console.log(inventory);
 
         listElement.innerHTML = this.view.renderItemHeading();
 
@@ -25,6 +25,7 @@ export default class mealController {
         });
     }
 
+    // this is the code that generates the row to dd items to the inventory
     addItem() {
         const addItemBar = document.getElementById('addItemTable');
         addItemBar.innerHTML = '';
@@ -35,6 +36,7 @@ export default class mealController {
         addItemBar.appendChild(addItemBarRow);
     }
 
+    // this adds the item to the inventory
     addIndividualItem() {
         let item = [];
         let itemName = document.getElementById('addIndividualItemName').value;
@@ -48,6 +50,7 @@ export default class mealController {
         location.reload(); // refreshing the page because we need to re-add the event listeners for the new buttons
     }
 
+    // deletes an item at a specified position
     deleteItem(position) {
         const inventory = this.modelItems.getItems();
         this.modelItems.delete(inventory[position]);
@@ -55,6 +58,8 @@ export default class mealController {
         location.reload(); // refreshing the page because we need to re-add the event listeners for the new buttons
     }
 
+    // edits a specific item. If the name is found, it simply changes the rest of the properties. If the name was 
+    // not found (name was the one that actually changed), then we delete the current item completely, and add a new one
     editItem(position) {
         const inventory = this.modelItems.getItems();
 
@@ -83,8 +88,8 @@ export default class mealController {
             listElement.appendChild(newItem);
         }
 
-        let modelItems = this.modelItems; // for some reason, i can not use this.modelItems in the if statement below. it says it's undefined so i defined it again here
         // add event listener for the Finish button
+        let modelItems = this.modelItems; // for some reason, i can not use this.modelItems in the if statement below. it says it's undefined so i defined it again here
         document.addEventListener("touchend", function (finishEditItemButton) {
             if (finishEditItemButton.target && finishEditItemButton.target.id == 'editedItemFinishID') {
                 const itemName = document.getElementById('editedItemNameID').value;
@@ -97,34 +102,34 @@ export default class mealController {
         });
     }
 
+    // lists the existing recipes
     listRecipes() {
         const inventory = this.modelRecipes.getItems();
         const listRecipes = document.getElementById('listRecipes');
-        // const linebreak = document.createElement("br");
 
-        // console.log(inventory);
-
-        let IDcounter = 0;
+        let IDcounter = 0; // used to generate differnt IDs for the buttons generated here
         inventory.forEach(recipe => {
             IDcounter++;
             const newRecipe = this.view.renderRecipe(recipe, IDcounter);
             listRecipes.appendChild(newRecipe);
-            // listRecipes.appendChild(linebreak);
         });
     }
 
+    // this metod does not actualy add a recipe. It only generates the table to add a recipe. A temporary recipe is
+    // stored as information is added. When the 'Finish' button is pressed, the temporary recipe is added to the actual local storage
     addRecipe() {
         const addRecipeTable = document.getElementById('addRecipeTable');
         addRecipeTable.innerHTML = '';
 
         const temporaryRecipe = this.modelRecipes.getTemporaryRecipe();
 
+        // generate the head of the table (recipe name)
         const addRecipeTableHead = document.createElement('tr');
         addRecipeTableHead.innerHTML = this.view.renderAddRecipe(temporaryRecipe.name);
         addRecipeTable.appendChild(addRecipeTableHead);
 
+        // generate the temporary recipe ingredients
         const temporaryRecipeIngredients = temporaryRecipe.ingredients;
-
         let IDCounter = 0;
         temporaryRecipeIngredients.forEach(ingredient => {
             IDCounter++;
@@ -132,6 +137,7 @@ export default class mealController {
             addRecipeTable.appendChild(newIngredient);
         });
 
+        // generate the temporary recipe description
         const addRecipeDescription = document.createElement('tr');
         addRecipeDescription.innerHTML = this.view.renderAddDescription(temporaryRecipe.description);
         addRecipeTable.appendChild(addRecipeDescription);
@@ -146,6 +152,7 @@ export default class mealController {
         }  
     }
 
+    // this method does not actualy add the ingredient to the temporary recipe. It only generates the table to do so
     addTemporaryIngredient() {
         const newRecipeName = document.getElementById('addRecipeName').value;
         this.modelRecipes.storeNewRecipeName(newRecipeName);
@@ -162,6 +169,7 @@ export default class mealController {
         addRecipeTable.appendChild(addRecipeIngredient);
     }
 
+    // this method adds the temporary ingredient to the temporary recipe
     addTemporaryIndividualIngredient() {
         const newIngredientName = document.getElementById('addIndividualIngredientNameID').value;
         const newIngredientQuantity = document.getElementById('addIndividualIngredientQuantityID').value;
@@ -176,13 +184,14 @@ export default class mealController {
         this.addRecipe(); // we're re-drawing the current table 
     }
 
+    // removes a temporary ingredient from the temporary recipe (this is while adding a recipe)
     removeTemporaryIndividualIngredient(position) {
-        // console.log('test');
         this.modelRecipes.deleteTemporaryIndividualIngredient(position);
 
         this.addRecipe(); // we're re-drawing the current table
     }
 
+    // this method actually adds the temporary recipe into the local storage
     addIndividualRecipe() {
         const newRecipeDescription = document.getElementById('temporaryRecipeDescriptionID').value;
         this.modelRecipes.storeNewRecipeDescription(newRecipeDescription);
@@ -190,8 +199,8 @@ export default class mealController {
         location.reload();
     }
 
+    // generates the recipe in edit mode. This method takes the position of the recipe to be edited, later used as reference
     editDeleteRecipe(position) {
-        // console.log(position);
         const recipes = this.modelRecipes.getItems();
         const recipeTables = document.getElementById('listRecipes');
         recipeTables.innerHTML = '';
@@ -231,31 +240,93 @@ export default class mealController {
         document.addEventListener("touchend", function (finishEditIndividualRecipeButton) {
             if (finishEditIndividualRecipeButton.target && finishEditIndividualRecipeButton.target.id == 'finishEditRecipeButtonID') {
                 const recipeName = document.getElementById('editedRecipeNameID').value;
-                self.finishEditRecipe(recipeName);
+                self.finishEditRecipe(recipeName, position);
             }
         });
-
-        // add event listeners for all the Edit/Delete buttons
-        // let editDeleteButtons = document.getElementsByClassName("editDeleteRecipeButtonClass");
-
-        // for (let i = 0; i < editDeleteButtons.length; i++) {
-        //     editDeleteButtons[i].addEventListener("touchend", function () {
-        //         self.editDeleteItem(i);
-        //     });
-        // }
     }
 
+    // deletes a recipe from the local storage
     deleteRecipeForGood(recipeName) {
-        // console.log(recipeName);
+
         this.modelRecipes.deleteRecipe(recipeName);
 
         location.reload();
     }
 
-    finishEditRecipe(recipeName) {
-        this.modelRecipes.editRecipe(recipeName);
+    // this is the method called by the "Finish" button while editing a recipe(in other words, finish editing)
+    finishEditRecipe(recipeName, position) {
+        // getting all the ingredients names from the recipe
+        const ingredientNames = document.getElementsByClassName('editedRecipeIngredientNameClass');
+        let newIngredientNames = [];
+        for (let i = 0; i < ingredientNames.length; i++) {
+            newIngredientNames.push(ingredientNames[i].value);
+        }
+
+        // getting all the ingredient quantities from the recipe
+        const ingredientQuantities = document.getElementsByClassName('editedRecipeIngredientQuantityClass');
+        let newIngredientQuantities = [];
+        for (let i = 0; i < ingredientQuantities.length; i++) {
+            newIngredientQuantities.push(ingredientQuantities[i].value);
+        }
+
+        const recipeDescription = document.getElementById('editRecipeDescriptionID').value;
+
+        this.modelRecipes.editRecipe(recipeName, newIngredientNames, newIngredientQuantities, recipeDescription, position);
 
         location.reload();
+    }
+
+    // generate a weekly menu from our current recipe list
+    generateMenu() {
+        const recipes = this.modelRecipes.getItems();
+
+        // create the weekly menu table head
+        const weeklyMenu = document.getElementById('contentGMenuID');
+        const weeklyMenuTable = document.createElement('table');
+        weeklyMenuTable.innerHTML = this.view.renderMenuHeading();
+        
+        // randomly pick from the list of recipes and add them to the menu
+        // if (recipes.length >= 7) {
+            for (let i = 0; i < 7; i++) {
+                let randomRecipe = recipes[Math.floor(Math.random()*recipes.length)];
+                const newRecipeEntry = this.view.renderweekyRecipe(randomRecipe.name, i);
+                weeklyMenuTable.appendChild(newRecipeEntry);
+
+                // store the newly generated menu as we create it
+                this.modelMenus.storeCurrentMeal(randomRecipe.name, i);
+            }
+        // } else {
+        //     for (let i = 0; i < recipes.length; i++) {
+        //         let randomRecipe = recipes[Math.floor(Math.random()*recipes.length)];
+        //         const newRecipeEntry = this.view.renderweekyRecipe(randomRecipe.name, i);
+        //         weeklyMenuTable.appendChild(newRecipeEntry);
+
+        //         // store the newly generated menu as we create it
+        //         this.modelMenus.storeCurrentMeal(randomRecipe.name, i);
+        //     }
+        // }
+
+        weeklyMenu.appendChild(weeklyMenuTable);
+
+        // store the weekly meal in the local storage
+        this.modelMenus.storeMeal();
+    }
+
+    // view current menu
+    viewMenu() {
+        const menus = this.modelMenus.getMeals();
+
+        // create the weekly menu table head
+        const weeklyMenu = document.getElementById('contentVMenuID');
+        const weeklyMenuTable = document.createElement('table');
+        weeklyMenuTable.innerHTML = this.view.renderMenuHeading();
+
+        for (let i = 0; i < menus.length; i++) {
+            const newRecipeEntry = this.view.renderweekyRecipe(menus[i].meal, i);
+            weeklyMenuTable.appendChild(newRecipeEntry);
+        }
+
+        weeklyMenu.appendChild(weeklyMenuTable);
     }
 }
 

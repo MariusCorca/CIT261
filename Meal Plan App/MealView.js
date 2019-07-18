@@ -3,6 +3,7 @@ export default class mealView {
         
     }
 
+    // renders the had of the Item table
     renderItemHeading() {
         const heading = `
         <tr>
@@ -14,9 +15,9 @@ export default class mealView {
         return heading;
     }
 
+    // renders an item. Button IDs are created dynamically
     renderItem(item, IDcounter) {
         const element = document.createElement('tr');
-        //element.style.cssText = 'text-align: center';
         element.innerHTML = `
         <td>${item.name}</td>
         <td>${item.quantity}</td>
@@ -26,6 +27,7 @@ export default class mealView {
         return element;
     }
 
+    // renders table for adding an item
     renderAddItem() {
         const addItemRow = `
         <td>Item <input type='text' id='addIndividualItemName'></td>
@@ -36,6 +38,7 @@ export default class mealView {
         return addItemRow;
     }
 
+    // renders an item in edit mode
     renderEditItem(item) {
         const element = document.createElement('tr');
         element.innerHTML = `
@@ -47,6 +50,7 @@ export default class mealView {
         return element;
     }
 
+    // redners the add recipe table
     renderAddRecipe(temporaryRecipeName) {
         const tempRecipeTableHead = `
         <td>Recipe Name <input type='text' id='addRecipeName' value='${temporaryRecipeName}'></td>
@@ -57,18 +61,18 @@ export default class mealView {
         return tempRecipeTableHead;
     }
 
+    // renders the ingredient in the add recipe table
     renderIndividualIngredient(ingredient, IDcounter) {
-        // console.log('in render');
         const tempRecipeIngredient = document.createElement('tr');
         tempRecipeIngredient.innerHTML = `
         <td>${ingredient.name}</td>
         <td>${ingredient.quantity}</td>
         <td><button class = "removeTemporaryIndividualIngredientButtonClass" id='removeTemporaryIngredientButtonID${IDcounter}'>-</td>
         `;
-        // console.log(tempRecipeIngredient);
         return tempRecipeIngredient;
     }
 
+    // renders the add ingredient in the add recipe table
     renderAddRecipeIngredient() {
         const addRecipeIngredientRow = `
         <td>Ingredient <input type='text' id='addIndividualIngredientNameID'></td>
@@ -79,6 +83,7 @@ export default class mealView {
         return addRecipeIngredientRow;
     }
 
+    // renders description in the add recipe table
     renderAddDescription(description) {
         const addDescription = `
         <td>Description</td>
@@ -89,6 +94,7 @@ export default class mealView {
         return addDescription;
     }
 
+    // renders a recipe. Generates IDs for buttons dynamically
     renderRecipe(recipe, IDcounter) {
         let recipeTable = document.createElement('table');
         const lineBreak = document.createElement('br');
@@ -119,6 +125,7 @@ export default class mealView {
         return recipeTable;
     }
 
+    // renders a recipe in eit mode
     renderEditRecipe(recipe) {
         let recipeTable = document.createElement('table');
         const lineBreak = document.createElement("br");
@@ -150,8 +157,56 @@ export default class mealView {
 
         return recipeTable;
     }
+
+    // renders the heading for the weekly menu table
+    renderMenuHeading() {
+        const heading = `
+        <tr>
+            <th>Day of Week</th>
+            <th>Menu</th>
+        </tr>
+        `;
+
+        return heading;
+    }
+
+    // renders menu for one day
+    renderweekyRecipe(radomRecipeName, dayOfWeek) {
+        let currentDay = '';
+        switch(dayOfWeek) {
+            case 0:
+                currentDay = 'Monday';
+                break;
+            case 1:
+                currentDay = 'Tuesday';
+                break;
+            case 2:
+                currentDay = 'Wednesday';
+                break;
+            case 3:
+                currentDay = 'Thursday';
+                break;
+            case 4:
+                currentDay = 'Friday';
+                break;
+            case 5:
+                currentDay = 'Saturday';
+                break;
+            case 6:
+                currentDay = 'Sunday';
+                break;
+        }
+        const oneMenu = document.createElement('tr');
+        oneMenu.innerHTML = `
+        <td id='currentDayID${dayOfWeek}'>${currentDay}</td>
+        <td id='recipeOfDayID${dayOfWeek}'>${radomRecipeName}</td>
+        `;
+
+        return oneMenu;
+    }
 }
 
+// renders individual ingredient in a recipe
 function renderEachIngredient(ingredient) {
     let recipeIngredient = document.createElement('tr');
     recipeIngredient.innerHTML = `
@@ -162,11 +217,12 @@ function renderEachIngredient(ingredient) {
     return recipeIngredient;   
 }
 
+// renders individual ingredient in edit mode in a recipe
 function renderEachIngredientEdit(ingredient, IDcounter) {
     let recipeIngredient = document.createElement('tr');
     recipeIngredient.innerHTML = `
-    <td><input type='text' id='editedRecipeIngredientQuantityID${IDcounter}' value='${ingredient.quantity}'</td>
-    <td><input type='text' id='editedRecipeIngredientNameID${IDcounter}' value='${ingredient.name}'</td>
+    <td><input type='text' class='editedRecipeIngredientQuantityClass' id='editedRecipeIngredientQuantityID${IDcounter}' value='${ingredient.quantity}'</td>
+    <td><input type='text' class='editedRecipeIngredientNameClass' id='editedRecipeIngredientNameID${IDcounter}' value='${ingredient.name}'</td>
     `;
 
     return recipeIngredient;   

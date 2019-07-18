@@ -1,8 +1,15 @@
 let temporaryRecipe = {
-        "name": '',
-        "ingredients": [],
-        "description": ''
-    };
+    "name": '',
+    "ingredients": [],
+    "description": ''
+};
+
+let temporaryMeal = {
+    "dayOfWeek": '',
+    "meal": ''
+};
+
+let currentTempMeals = [];
 
 export default class mealModel {
     constructor (key) {
@@ -11,8 +18,8 @@ export default class mealModel {
         // console.log(window.localStorage);
     }
 
+    // adds an item to the inventory
     add(item) {
-        // inventory.push(item);
         const newItem = {
             name: item.name,
             quantity: item.quantity
@@ -21,45 +28,48 @@ export default class mealModel {
         writeLS(this.key, this.items);
     }
 
+    // deletes an item from the inventory
     delete(item) {
-        // console.log(item);
         deleteLS(this.key, item.name);
-        // console.log(item.name);
     }
 
+    // edits an item at a specific position
     edit(item, position) {
         editLS(this.key, item, position);
     }
 
+    // returns the current storage
     getItems() {
-        // return inventory;
         return this.items;
     }
 
+    // store temporary recipe name
     storeNewRecipeName(newRecipeName) {
         temporaryRecipe.name = newRecipeName;
     }
 
+    // store temporary recipe description
     storeNewRecipeDescription(newRecipeDescription) {
         temporaryRecipe.description = newRecipeDescription;
     }
 
+    // store temporary ingredients
     storeNewIngredientInTempRecipe(newTempIngredient) {
         temporaryRecipe.ingredients.push(newTempIngredient);
-        // console.log(temporaryRecipe);
     }
 
+    // returns the current temporary recipe
     getTemporaryRecipe() {
         return temporaryRecipe;
     }
 
+    // delete an ingredient from the temporary recipe
     deleteTemporaryIndividualIngredient(position) {
         temporaryRecipe.ingredients.splice(position, 1);
     }
 
+    // actually adds the recipe to the local storage
     addRecipe() {
-        // let currentRecipes = readLS(this.key) || [];
-        // currentRecipes.push(temporaryRecipe);
         this.items.push(temporaryRecipe);
         writeLS(this.key, this.items);
         temporaryRecipe = {
@@ -69,29 +79,107 @@ export default class mealModel {
         };
     }
 
+    // delete a recipe from local storage
     deleteRecipe(recipeName) {
-        // console.log(recipeName);
         deleteLS(this.key, recipeName);
     }
 
-    editRecipe(recipeName) {
-        editLSRecipe(this.key, recipeName);
+    // edit a recipe. This method receives an array of ingredient names and an array of ingredient quantities
+    // in addition to tother paramaters. It first combines the ingredient names and quantities into one array, then
+    // has it added to the local storage
+    editRecipe(newRecipeName, newIngredientNames, newIngredientQuantities, newRecipeDescription, position) {
+        // combine ingredient names and quantities together
+        let newIngredients = [];
+        let ingredient = {};
+
+        for (let i = 0; i < newIngredientNames.length; i++) {
+            ingredient = {
+                'name': newIngredientNames[i],
+                'quantity': newIngredientQuantities[i]
+            }
+            newIngredients.push(ingredient);
+            ingredient = {};
+        }
+
+        editLSRecipe(this.key, newRecipeName, newIngredients, newRecipeDescription, position);
+    }
+
+    // stores the current meal temporarily
+    storeCurrentMeal(meal, dayOfWeek) {
+        let currentDay = '';
+        switch(dayOfWeek) {
+            case 0:
+                currentDay = 'Monday';
+                break;
+            case 1:
+                currentDay = 'Tuesday';
+                break;
+            case 2:
+                currentDay = 'Wednesday';
+                break;
+            case 3:
+                currentDay = 'Thursday';
+                break;
+            case 4:
+                currentDay = 'Friday';
+                break;
+            case 5:
+                currentDay = 'Saturday';
+                break;
+            case 6:
+                currentDay = 'Sunday';
+                break;
+        }
+
+        temporaryMeal.dayOfWeek = currentDay;
+        temporaryMeal.meal = meal;
+
+        // let currentMeals = this.items;
+        // let currentMeals = [];
+        currentTempMeals.push(temporaryMeal);
+
+        // writeLS(this.key, currentMeals);
+
+        temporaryMeal = {
+            "dayOfWeek": '',
+            "meal": ''
+        };
+
+        // console.log(currentTempMeals);
+    }
+
+    // stores the weekly meal in the local storage
+    storeMeal() {
+        // console.log(currentTempMeals);
+        // deleteLS(this.key, currentTempMeals);
+        localStorage.removeItem(this.key);
+        writeLS(this.key, currentTempMeals);
+
+        currentTempMeals = [];
+    }
+
+    // returns the current meal storage
+    getMeals() {
+        return readLS(this.key) || [];;
     }
 }
 
+// returns the local storage parsed
 function readLS(key) {
     return JSON.parse(window.localStorage.getItem(key));
-    //localStorage.clear();
 }
 
+// stores in the local storage
 function writeLS(key, items) {
+    // console.log(items);
     window.localStorage.setItem(key, JSON.stringify(items));
+    // const test = JSON.parse(window.localStorage.getItem(key));
+    // console.log(test);
 }
 
+// deletes an item from local storage. Retrieves the ocal storage in an array, deletes the item from the array,
+// clears the relevant local storage part and writes the new array to local storage
 function deleteLS(key, item) {
-    // window.localStorage.removeItem(key);
-    // let currentStorage = JSON.parse(window.localStorage.getItem(key));
-    // console.log(currentStorage);
     let currentStorage = readLS(key);
     console.log(currentStorage);
     let i = 0;
@@ -100,18 +188,15 @@ function deleteLS(key, item) {
             break;
         }
     }
-    // console.log(i);
     currentStorage.splice(i, 1);
-    // console.log(currentStorage);
-    // localStorage.clear();
     localStorage.removeItem(key);
 
     writeLS(key, currentStorage);
 }
 
+// edits an item in the local storage. If the item is found, it edits only the other parts of the item.
+// If it is not, it deletes the item and adds a new one
 function editLS(key, item, position) {
-    // console.log(item);
-    // console.log(position);
     let currentStorage = readLS(key);
 
     let found = 0
@@ -124,12 +209,8 @@ function editLS(key, item, position) {
     }
 
     if (found) {
-        // console.log('found!');
         currentStorage[i].quantity = item.quantity;
-        // console.log(currentStorage[i].quantity);
-        // console.log(item.quantity);
     } else {
-        // console.log('not found!');
         currentStorage.splice(position, 1);
         currentStorage.push(item);
     }
@@ -137,19 +218,32 @@ function editLS(key, item, position) {
     writeLS(key, currentStorage);
 }
 
-function editLSRecipe(key, recipeName) {
+// edits a recipe in local storage. If the recipe is found, it edits only the other parts of the recipe.
+// If it is not, it deletes the recipe and adds a new one
+function editLSRecipe(key, newRecipeName, newIngredients, newRecipeDescription, position) {
     let currentStorage = readLS(key);
 
     let found = 0
     let i = 0;
     for (i; i < currentStorage.length; i++) {
-        if (currentStorage[i].name == recipeName) {
+        if (currentStorage[i].name == newRecipeName) {
             found = 1;
             break;
         }
     }
 
     if (found) {
-        // console.log('found');
+        currentStorage[i].ingredients = newIngredients;
+        currentStorage[i].description = newRecipeDescription;
+    } else {
+        currentStorage.splice(position, 1);
+        let newRecipe = {
+            "name": newRecipeName,
+            "ingredients": newIngredients,
+            "description": newRecipeDescription
+        };
+        currentStorage.push(newRecipe);
     }
+
+    writeLS(key, currentStorage);
 }
